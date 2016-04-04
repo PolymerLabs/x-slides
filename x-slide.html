@@ -1,0 +1,95 @@
+<link rel="import" href="../di-demo/requester.html">
+<link rel="import" href="../neon-animation/neon-animations.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="x-slide">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+    </style>
+    <div id="container"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'x-slide',
+
+      behaviors: [
+        Polymer.Templatizer,
+        Polymer.RequesterBehavior,
+        Polymer.NeonAnimationRunnerBehavior,
+        Polymer.NeonSharedElementAnimatableBehavior,
+        Polymer.IronResizableBehavior,
+      ],
+
+      properties: {
+        layout: {
+          type: String,
+        },
+
+        animationConfig: {
+          value() {
+            return {
+              // 'entry': {
+              //   name: 'hero-animation',
+              //   id: 'hero',
+              //   toPage: this,
+              // },
+              // 'exit': {
+              //   name: 'hero-animation',
+              //   id: 'hero',
+              //   fromPage: this,
+              // },
+            };
+          },
+        },
+
+      },
+
+      attached() {
+        if (this._instance) {
+          return;
+        }
+
+        let template = this.getTemplate();
+
+        if (!template) {
+          return;
+        }
+
+        let containerDom = Polymer.dom(this.$.container);
+        while (containerDom.firstChild) {
+          containerDom.removeChild(containerDom.firstChild);
+        }
+
+        let theme = this.requestInstance('x-slides-theme');
+        let preparedTemplate = theme.prepareSlideTemplate(template, this.layout);
+        this.templatize(preparedTemplate);
+        this._instance = this.stamp();
+        containerDom.appendChild(this._instance.root);
+      },
+
+      getTemplate() {
+        return this.queryEffectiveChildren('template');
+      },
+
+      get sharedElements() {
+        return ({
+          hero: this.hero,
+        });
+      },
+
+      get hero() {
+        return Polymer.dom(this.root).querySelector('[hero]');
+      },
+
+    });
+  </script>
+</dom-module>

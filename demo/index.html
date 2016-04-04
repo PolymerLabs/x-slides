@@ -1,0 +1,63 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>x-slides demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script>
+      Polymer = {dom: 'shadow'};
+    </script>
+    <link rel="import" href="../x-slides.html">
+    <link rel="import" href="../x-slide.html">
+    <link rel="import" href="../x-theme.html">
+    <link rel="import" href="../x-theme-dark.html">
+
+    <style>
+      body, html {
+        margin: 0;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+      x-slides {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <x-slide-player src="my-slides.html"></x-slide-player>
+    <x-slides theme="dark">
+
+      <x-slide layout="title">
+        <template>
+          <template block="super"></template>
+          <style>
+            :host {
+              background: url('crane.jpeg');
+            }
+          </style>
+          <h1 hero>Dependency Injection with Custom Elements</h1>
+          <h2>Justin Fagnani</h2>
+          <h2>Engineer, Polymer Team</h2>
+        </template>
+      </x-slide>
+
+      <x-slide layout="base">
+        <template>
+          <template block="super"></template>
+          <div>
+            <h1 hero>Dependency Injection with Custom Elements</h1>
+            <p>
+              This is the second page.
+            </p>
+          </div>
+        </template>
+      </x-slide>
+
+    </x-slides>
+  </body>
+</html>

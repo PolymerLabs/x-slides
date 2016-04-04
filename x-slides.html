@@ -1,0 +1,181 @@
+<!--
+  polymer.html must be imported before di-demo because provider.html doesn't
+  import polymer and writes to the Polymer object.
+  1) I should fix that. 2) globals are a really poor substitute for modules
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../di-demo/provider.html">
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/neon-animations.html">
+
+<dom-module id="x-slides">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      neon-animated-pages {
+        flex: 0 0 auto;
+        display: flex;
+      }
+    </style>
+    <!-- <iron-a11y-keys
+        id="a11y"
+        keys="left right"
+        target="[[parentNode]]"
+        on-keys-pressed="_onKeysPressed">
+    </iron-a11y-keys> -->
+    <neon-animated-pages
+        id="pages"
+        selected="[[index]]"
+        entry-animation="[[entryAnimation]]"
+        exit-animation="[[exitAnimation]]">
+      <content select="x-slide"></content>
+    </neon-animated-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'x-slides',
+
+      behaviors: [
+        Polymer.IronResizableBehavior,
+        Polymer.ProviderBehavior,
+      ],
+
+      properties: {
+        index: {
+          type: Number,
+          value: 0,
+        },
+        width: {
+          type: Number,
+          value: 1920,
+        },
+        height: {
+          type: Number,
+          value: 1080,
+        },
+        theme: {
+          type: String,
+          // observer: '_themeChanged',
+        },
+      },
+
+      hostAttributes: {
+        tabindex: 0,
+      },
+
+      listeners: {
+        'keydown': '_onKeyDown',
+        'click': '_onClick',
+        'dblclick': '_onDoubleClick',
+        'iron-resize': '_onResize',
+      },
+
+      created() {
+        this.provide('x-slides-theme', () => this._getTheme());
+      },
+
+      attached() {
+        this.focus();
+      },
+
+      _onResize() {
+        let width = this.offsetWidth;
+        let height = this.offsetHeight;
+        let ratio = width / height;
+        let contentRatio = this.width / this.height;
+
+        let scale = (ratio < contentRatio)
+            ? width / this.width
+            : height / this.height;
+
+        let style = this.$.pages.style;
+        style.transform = `scale(${scale})`;
+        style.width = `${this.width}px`;
+        style.height = `${this.height}px`;
+      },
+
+      _onKeysPressed(event) {
+        console.log('_onKeysPressed', event, event.key);
+        switch (event.key) {
+          case 'left':
+            this.previous();
+            break;
+          case 'right':
+            this.next();
+            break;
+        }
+      },
+
+      _onKeyDown(event) {
+        if (event.keyCode === 37) {
+          this.previous();
+        } else if (event.keyCode === 39) {
+          this.next();
+        }
+      },
+
+      _onClick(event) {
+        this.next();
+      },
+
+      _onDoubleClick() {
+        this.webkitRequestFullScreen();
+      },
+
+      next() {
+        if (this.index + 1< this._getPages().length) {
+          this.entryAnimation = 'slide-from-right-animation';
+          this.exitAnimation = 'slide-left-animation';
+          let pages = Array.from(this._getPages());
+          let currentPage = pages[this.index];
+          let nextPage = pages[this.index + 1];
+
+          let currentHero = currentPage.hero;
+          let nextHero = nextPage.hero;
+
+          // TODO: seamless animations:
+          //  1. clone heros and styles!
+          //  2. hide originals
+          //  3. animate heros
+          //  4. hide clones
+          //  5. unhide originals
+
+          // currentPage.animationConfig.exit.toPage = nextPage;
+          // nextPage.animationConfig.entry.fromPage = currentPage;
+          this.index++;
+          this.$.pages.selectedItem.playAnimation('entry');
+        }
+      },
+
+      previous() {
+        if (this.index > 0) {
+          this.entryAnimation = 'slide-from-left-animation';
+          this.exitAnimation = 'slide-right-animation';
+          let pages = Array.from(this._getPages());
+          let currentPage = pages[this.index];
+          let previousPage = pages[this.index - 1];
+          // currentPage.animationConfig.exit.toPage = previousPage;
+          // previousPage.animationConfig.entry.fromPage = currentPage;
+          this.index--;
+          this.$.pages.selectedItem.playAnimation('entry');
+        }
+      },
+
+      _getTheme() {
+        return XTheme.getTheme(this.theme);
+      },
+
+      _getPages() {
+        return Polymer.dom(this).querySelectorAll('x-slide');
+      }
+
+    });
+  </script>
+</dom-module>

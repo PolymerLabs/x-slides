@@ -1,0 +1,25 @@
+{
+  "name": "slides",
+  "authors": [
+    "Justin Fagnani <justinfagnani@google.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "di-demo": "PolymerLabs/di-demo#master",
+    "polymer": "Polymer/Polymer#^1.3.1",
+    "neon-animation": "PolymerElements/neon-animation#^1.1.1",
+    "iron-a11y-keys": "PolymerElements/iron-a11y-keys#^1.0.4"
+  }
+}

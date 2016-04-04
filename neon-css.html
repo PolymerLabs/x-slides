@@ -1,0 +1,33 @@
+// let all = containerDom.querySelectorAll('*');
+// for (let el of all) {
+//   let style = window.getComputedStyle(el);
+//   let flowAnimation = style.getPropertyValue('--neon-animation');
+//   if (flowAnimation) {
+//     let animations = flowAnimation
+//         .trim()
+//         .split(',')
+//         .map((a) => a.trim().split(' '));
+//     console.log('flowAnimation', animations);
+//
+//     for (let animation of animations) {
+//       let animationName = animation[0];
+//       let animationDelay = parseInt(animation[1]);
+//       let animationDuration = parseInt(animation[2]);
+//       let config = {
+//         name: animationName,
+//         node: el,
+//         timing: {
+//           delay: animationDelay,
+//           duration: animationDuration,
+//         },
+//       };
+//
+//       this.animationConfig['entry'].push(config);
+//     }
+//   }
+// }
+// console.log(this.animationConfig);
+// let h1s = Array.from(containerDom.querySelectorAll('h1'));
+// this.animationConfig['entry'][0].nodes = h1s;
+// this.animationConfig['entry'][1].nodes = h1s;
+// this.animationConfig['entry'][2].nodes = h1s;
