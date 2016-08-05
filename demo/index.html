@@ -29,7 +29,6 @@
     </style>
   </head>
   <body>
-    <x-slide-player src="my-slides.html"></x-slide-player>
     <x-slides theme="dark">
 
       <x-slide layout="title">
@@ -40,7 +39,7 @@
               background: url('crane.jpeg');
             }
           </style>
-          <h1 hero>Dependency Injection with Custom Elements</h1>
+          <h1 hero>Presentations with Polymer</h1>
           <h2>Justin Fagnani</h2>
           <h2>Engineer, Polymer Team</h2>
         </template>
@@ -50,13 +49,49 @@
         <template>
           <template block="super"></template>
           <div>
-            <h1 hero>Dependency Injection with Custom Elements</h1>
+            <h1 hero>Presentations with Polymer</h1>
             <p>
               This is the second page.
             </p>
           </div>
         </template>
       </x-slide>
+
+      <x-slide layout="title-body">
+        <template>
+          <template block="super"></template>
+          <h1 hero>Architecture</h1>
+          <p>
+            All slides are written in &lt;template> elements, so that they can
+            be stamped out as needed, and in multiple views (such as filmstrips).
+          </p>
+        </template>
+      </x-slide>
+
+      <x-slide layout="title-body">
+        <template>
+          <template block="super"></template>
+          <style>
+            pre {
+              font-size: 30px;
+              color: #C390D4;
+            }
+          </style>
+          <h1 hero>Example</h1>
+          <pre>
+&lt;x-slide layout="title-body">
+  &lt;template>
+    &lt;template block="super">&lt;/template>
+    &lt;h1>Example&lt;/h1>
+    &lt;p>
+      This is an example slide.
+    &lt;/p>
+  &lt;/template>
+&lt;/x-slide>
+          </pre>
+        </template>
+      </x-slide>
+
 
     </x-slides>
   </body>

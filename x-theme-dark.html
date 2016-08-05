@@ -1,6 +1,7 @@
 <link rel="import" href="x-theme.html">
 
 <x-theme name="dark">
+
   <template name="base">
     <style>
       @keyframes fade-in {
@@ -42,9 +43,34 @@
       }
     </style>
   </template>
+
   <template name="title" extends="base">
     <template block="super"></template>
     <style>
+      h1 {
+        font-size: 4em;
+        max-width: 80%;
+        margin: 20px 0;
+      }
+      h2 {
+        font-weight: normal;
+        font-size: 1.5em;
+        max-width: 80%;
+        margin: 4px 0;
+        opacity: 0.5;
+      }
+    </style>
+  </template>
+
+  <template name="title-body" extends="base">
+    <template block="super"></template>
+    <style>
+      #container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
       h1 {
         font-size: 4em;
         max-width: 80%;
