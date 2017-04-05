@@ -1,0 +1,43 @@
+<script>
+  {
+    const _providers = new Symbol('ProviderMixin.providers');
+    Polymer.ProviderMixin = (superclass) => class extends superclass {
+
+      constructor() {
+        super();
+        this['_providers'] = new Map();
+        this.addEventListener('request-provider', (event) => {
+          const key = event.detail.key;
+          const provider = this['_providers'].get(key);
+          if (provider) {
+            event.detail.provider = provider;
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        });
+      }
+
+      /**
+       * Provide values for key with the given factory.
+       *
+       * @param {*} key used to identify the values being provided. Keys
+       *   can be any type, but are used an Map keys, so must 
+       * @param {function(): *} factory
+       */
+      provide(key, factory) {
+        this['_providers'].set(key, factory);
+      }
+
+      /**
+       * Provide a specific instance for all requests for key.
+       *
+       * @param {*} key
+       * @param {*} instance
+       */
+      provideInstance(key, instance) {
+        this['_providers'].set(key, () => instance);
+      }
+
+    };
+  }
+</script>
