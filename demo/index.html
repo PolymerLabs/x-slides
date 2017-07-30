@@ -2,18 +2,12 @@
 
 <html>
   <head>
-    <title>x-slides demo</title>
+    <title>fig-slides demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script>
-      Polymer = {dom: 'shadow'};
-    </script>
-    <link rel="import" href="../x-slides.html">
-    <link rel="import" href="../x-slide.html">
-    <link rel="import" href="../x-theme.html">
-    <link rel="import" href="../x-theme-dark.html">
+    <script type="module" src="../lib/fig-slide.js"></script>
+    <script type="module" src="../lib/fig-viewer.js"></script>
 
     <style>
       body, html {
@@ -29,9 +23,9 @@
     </style>
   </head>
   <body>
-    <x-slides theme="dark">
+    <fig-viewer theme="dark">
 
-      <x-slide layout="title">
+      <fig-slide layout="title">
         <template>
           <template block="super"></template>
           <style>
@@ -43,9 +37,9 @@
           <h2>Justin Fagnani</h2>
           <h2>Engineer, Polymer Team</h2>
         </template>
-      </x-slide>
+      </fig-slide>
 
-      <x-slide layout="base">
+      <fig-slide layout="base">
         <template>
           <template block="super"></template>
           <div>
@@ -55,9 +49,9 @@
             </p>
           </div>
         </template>
-      </x-slide>
+      </fig-slide>
 
-      <x-slide layout="title-body">
+      <fig-slide layout="title-body">
         <template>
           <template block="super"></template>
           <h1 hero>Architecture</h1>
@@ -66,9 +60,9 @@
             be stamped out as needed, and in multiple views (such as filmstrips).
           </p>
         </template>
-      </x-slide>
+      </fig-slide>
 
-      <x-slide layout="title-body">
+      <fig-slide layout="title-body">
         <template>
           <template block="super"></template>
           <style>
@@ -79,7 +73,7 @@
           </style>
           <h1 hero>Example</h1>
           <pre>
-&lt;x-slide layout="title-body">
+&lt;fig-slide layout="title-body">
   &lt;template>
     &lt;template block="super">&lt;/template>
     &lt;h1>Example&lt;/h1>
@@ -87,12 +81,12 @@
       This is an example slide.
     &lt;/p>
   &lt;/template>
-&lt;/x-slide>
+&lt;/fig-slide>
           </pre>
         </template>
-      </x-slide>
+      </fig-slide>
 
 
-    </x-slides>
+    </fig-viewer> 
   </body>
 </html>

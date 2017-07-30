@@ -1,0 +1,15 @@
+{
+  "name": "fig-slides",
+  "version": "1.0.0",
+  "main": "index.js",
+  "flat": true,
+  "license": "BSD-3-Clause",
+  "repository": "https://github.com/PolymerLabs/x-slides.git",
+  "author": "Justin Fagnani <justinfagnani@google.com>",
+  "dependencies": {
+    "lit-html": "^0.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.4.2"
+  }
+}
