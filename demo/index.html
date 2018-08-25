@@ -27,7 +27,7 @@
 
       <fig-slide layout="title" name="One">
         <template>
-          ${layout()}
+          ${super.render()}
           <style>
             :host {
               background: url('crane.jpeg');
@@ -35,18 +35,17 @@
               background-position: center;
             }
           </style>
-          <h1 hero>Presentations with Polymer</h1>
+          <h1>Presentations with Polymer</h1>
           <h2>Justin Fagnani</h2>
           <h2>Engineer, Polymer Team</h2>
-          ${layout.foo()}
         </template>
       </fig-slide>
 
       <fig-slide layout="base">
         <template>
-          ${layout()}
+          ${super.render()}
           <div>
-            <h1 hero>Presentations with Polymer</h1>
+            <h1>Presentations with Polymer</h1>
             <p>
               This is the second page.
             </p>
@@ -56,8 +55,8 @@
 
       <fig-slide layout="title-body">
         <template>
-          ${layout()}
-          <h1 hero>Architecture</h1>
+          ${super.render()}
+          <h1>Architecture</h1>
           <p>
             All slides are written in &lt;template> elements, so that they can
             be stamped out as needed, and in multiple views (such as filmstrips).
@@ -67,7 +66,7 @@
 
       <fig-slide layout="title-body">
         <template>
-          ${layout()}
+          ${super.render()}
           <style>
             pre {
               font-size: 30px;

@@ -49,8 +49,6 @@ export class FigSlideElement extends LitElement {
         (this.parentElement instanceof FigThemeElement)
             ? this.parentElement
             : (this.parentElement as any).theme;
-    console.log('FigSlideElement connectedCallback', this.name,
-                this.parentElement, (this.parentElement as any).theme, theme);
     const layout = (theme !== undefined && this.layoutName)
                        ? theme.getLayout(this.layoutName)
                        : undefined;
@@ -68,9 +66,10 @@ export class FigSlideElement extends LitElement {
   }
 
   renderSlide(): TemplateResult|undefined {
-    console.log('renderSlide', this.name);
+    console.log('renderSlide', this._figTemplate);
     if (this._figTemplate !== undefined) {
-      return this._figTemplate();
+      const i = new (this._figTemplate)()
+      return i.render();
     }
   }
 

@@ -12,15 +12,16 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-// Given an HTML template, convert it into a lit-html template function
 import {html, TemplateResult} from 'lit-html';
-
 import {FigSlideElement} from './fig-slide';
 import {FigThemeElement} from './fig-theme';
 
 export interface FigTemplate {
-  (): TemplateResult;
-  [name: string]: () => TemplateResult
+  new(): FigSlide;
+}
+
+export abstract class FigSlide {
+  abstract render(): TemplateResult;
 }
 
 /**
@@ -30,15 +31,15 @@ export interface FigTemplate {
  *
  * @param element
  */
-export function createFigTemplate(element: HTMLTemplateElement,
+function parseFigTemplate(element: HTMLTemplateElement,
                                   theme?: FigThemeElement,
-                                  layout?: FigSlideElement): FigTemplate {
-  console.log('createFigTemplate', theme, layout);
+                                  layout?: FigSlideElement) {
+  // console.log('createFigTemplate', theme, layout);
   // Convert <template> to closures
   const walker = document.createTreeWalker(
       element.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
 
-  const blocks: any = {};
+  const blocks: any[] = [];
 
   while (walker.nextNode()) {
     const node = walker.currentNode;
@@ -49,7 +50,7 @@ export function createFigTemplate(element: HTMLTemplateElement,
       const parameters =
           parametersAttr !== null ? parametersAttr.split(' ') : [];
       const directiveTemplate =
-          `(${parameters.join(', ')}) => ${createFigTemplate(node, theme, layout)}`;
+          `(${parameters.join(', ')}) => ${parseFigTemplate(node, theme, layout).render}`;
 
       // Replace references to `$this` in the directive expression
       // with the directiveTemplate closure
@@ -63,40 +64,41 @@ export function createFigTemplate(element: HTMLTemplateElement,
       const parametersAttr = node.getAttribute('parameters');
       const parameters =
           parametersAttr !== null ? parametersAttr.split(' ') : [];
-      const blockTemplate = createFigTemplate(node, theme, layout);
-      blocks[name] = blockTemplate;
+      const blockTemplate = parseFigTemplate(node, theme, layout);
+      blocks.push({name, blockTemplate});
       node.remove();
     }
   }
   const decodedTemplate = element.innerHTML.replace(/&amp;/g, '&')
                               .replace(/&gt;/g, '>')
                               .replace(/&lt;/g, '<');
-
-  const templateFunction = new Function('html', 'theme', 'layout',
-                                        `return html\`${decodedTemplate}\`;`);
-  const figTemplate =
-      (() => {
-        return templateFunction(html, theme, layout && layout._figTemplate);
-      }) as FigTemplate;
-  Object.assign(figTemplate, blocks);
-  return figTemplate;
+  return {
+    render: decodedTemplate,
+    blocks,
+  };
 }
 
-// export function createFigTemplate(element: HTMLTemplateElement,
-//                                   vars: string[]): FigTemplate {
-//   const templateContent = parseFigTemplate(element);
-//   const templateFunction =
-//       new Function('_lit_html_tag_', ...vars, `
-//         console.log('templateFunction called');
-//         return ${templateContent};
-//       `);
-//   console.log('templateFunction', templateFunction);
+export function createFigTemplate(element: HTMLTemplateElement,
+  theme?: FigThemeElement,
+  layout?: FigSlideElement): FigTemplate {
+  const t = parseFigTemplate(element, theme, layout);
 
-//   return (scope: any) => {
-//     const args = vars.map((arg) => scope[arg]);
-//     return templateFunction(html, ...args);
-//   }
-// }
+  const templateFunction = new Function('html', '$BaseClass', `
+    return class extends $BaseClass {
+      render() {
+        return html\`${t.render}\`;
+      }
+      ${t.blocks.map(({name, blockTemplate}) => `
+        ${name}() {
+          return html\`${blockTemplate.render}\`;
+        }
+      `)}
+    }
+  `);
+  const baseClass = layout === undefined ? FigSlide : layout._figTemplate;
+  const figTemplate = templateFunction(html, baseClass);
+  return figTemplate;
+}
 
 const isDirective = (node: Node): node is HTMLTemplateElement =>
     node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'TEMPLATE' &&

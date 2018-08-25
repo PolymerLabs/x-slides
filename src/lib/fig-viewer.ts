@@ -16,7 +16,7 @@ export class FigViewerElement extends LitElement {
   @property({attribute : 'theme', reflect: true}) themeName?: string;
 
   get theme(): FigThemeElement|undefined {
-    console.log('FigViewer theme', this.themeName);
+    // console.log('FigViewer theme', this.themeName);
     return (this.themeName !== undefined)
                ? FigThemeElement.themes.get(this.themeName)
                : undefined;
@@ -38,10 +38,10 @@ export class FigViewerElement extends LitElement {
 
   private _routeBound = () => this._route();
 
-  constructor() {
-    super();
-    console.log('FigViewer constructor');
-  }
+  // constructor() {
+  //   super();
+  //   console.log('FigViewer constructor');
+  // }
 
   // _getTheme() {
   //   if (this.themeName !== undefined) {
