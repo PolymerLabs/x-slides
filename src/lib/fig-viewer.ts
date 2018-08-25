@@ -31,38 +31,22 @@ export class FigViewerElement extends LitElement {
 
   private _previousClick = () => this.previous();
 
-  private _onResizeBound = () => this._onResize();
-
   private _onKeyDownBound = (e: KeyboardEvent) => this._onKeyDown(e);
 
   private _routeBound = () => this._route();
 
-  // constructor() {
-  //   super();
-  //   console.log('FigViewer constructor');
-  // }
-
-  // _getTheme() {
-  //   if (this.themeName !== undefined) {
-  //     return FigThemeElement.themes.get(this.themeName);
-  //   }
-  //   return (this.querySelector('fig-theme') || undefined) as FigThemeElement;
-  // }
-
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('resize', this._onResizeBound);
-    requestAnimationFrame(this._onResizeBound);
+
+    const ro = new ResizeObserver((entries) => this._onResize());    
+    ro.observe(this);
+
     this.setAttribute('tabindex', this.getAttribute('tabindex') || '-1');
     this.addEventListener('keydown', this._onKeyDownBound);
     this.focus();
 
     window.addEventListener('popstate', this._routeBound);
     this._route();
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener('resize', this._onResizeBound);
   }
 
   render() {
