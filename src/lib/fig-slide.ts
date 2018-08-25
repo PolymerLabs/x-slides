@@ -66,7 +66,6 @@ export class FigSlideElement extends LitElement {
   }
 
   renderSlide(): TemplateResult|undefined {
-    console.log('renderSlide', this._figTemplate);
     if (this._figTemplate !== undefined) {
       const i = new (this._figTemplate)()
       return i.render();

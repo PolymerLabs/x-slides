@@ -11,7 +11,6 @@ export class FigThemeElement extends LitElement {
   @property({attribute : 'name', reflect: true}) name?: string;
 
   get theme() {
-    console.log('A');
     return this;
   }
 

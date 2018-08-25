@@ -56,9 +56,7 @@ suite('fig-template', () => {
   test.only('template references', () => {
     templateElement.innerHTML =
         `<template directive="block(foo, $this)"></template>`;
-    // const call = (f: Function, ...args: any[]) => f.apply(undefined, args);
     const block = (f: Function, $this: any) => {
-      console.log('block', f, $this);
       if (f === undefined) {
         return $this;
       } else if (typeof f === 'function') {
@@ -75,7 +73,6 @@ suite('fig-template', () => {
       foo,
     };
     render(templateFunction(scope), container);
-    console.log(container.innerHTML);
     // assert.equal(container.innerHTML, '<div>foobar</div>');
   });
 });

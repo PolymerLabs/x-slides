@@ -34,7 +34,6 @@ export abstract class FigSlide {
 function parseFigTemplate(element: HTMLTemplateElement,
                                   theme?: FigThemeElement,
                                   layout?: FigSlideElement) {
-  // console.log('createFigTemplate', theme, layout);
   // Convert <template> to closures
   const walker = document.createTreeWalker(
       element.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
