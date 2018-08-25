@@ -1,0 +1,27 @@
+{
+  "name": "fig",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "polymer test --npm -l chrome -p",
+    "build": "tsc",
+    "serve": "polymer serve --npm",
+    "clean": "rm -r ./lib fig-*.js fig-*.js.map",
+    "format": "find src test | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@polymer/lit-element": "^0.6.0-dev.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "typescript": "^3.0.1",
+    "wct-browser-legacy": "^1.0.1"
+  }
+}

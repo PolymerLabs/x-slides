@@ -1,0 +1,95 @@
+<script type="module" src="../fig.js"></script>
+
+<fig-theme name="dark">
+
+  <fig-slide name="base">
+    <template>
+      <style>
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-out {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        :host {
+          background: #222;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-family: arial, sans;
+          padding: 2.5em;
+          font-size: 2em;
+          background-size: cover;
+        }
+        * {
+          text-shadow: 0 0 10px black;
+        }
+        h1 {
+          font-size: 4em;
+          max-width: 80%;
+          margin: 20px 0;
+          animation: fade-in ease-in 1s;
+        }
+        h2 {
+          font-weight: normal;
+          font-size: 1.5em;
+          max-width: 80%;
+          margin: 4px 0;
+          opacity: 0.5;
+          animation: fade-in ease-in 1s;
+        }
+      </style>
+    </template>
+  </fig-slide>
+
+  <fig-slide name="title" layout="base">
+    <template>
+      ${layout()}
+      <style>
+        h1 {
+          font-size: 4em;
+          max-width: 80%;
+          margin: 20px 0;
+        }
+        h2 {
+          font-weight: normal;
+          font-size: 1.5em;
+          max-width: 80%;
+          margin: 4px 0;
+          opacity: 0.5;
+        }
+      </style>
+      <template block="foo"><pre>I'm foo!</pre></template>
+    </template>
+  </fig-slide>
+
+  <fig-slide name="title-body" layout="base">
+    <template>
+      ${layout()}
+      <style>
+        /* #container {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          width: 100%;
+        } */
+        h1 {
+          font-size: 4em;
+          max-width: 80%;
+          margin: 20px 0;
+        }
+        h2 {
+          font-weight: normal;
+          font-size: 1.5em;
+          max-width: 80%;
+          margin: 4px 0;
+          opacity: 0.5;
+        }
+      </style>
+    </template>
+  </fig-slide>
+</fig-theme>
