@@ -15,13 +15,10 @@
 import {html, TemplateResult} from 'lit-html';
 import {FigSlideElement} from './fig-slide';
 import {FigThemeElement} from './fig-theme';
+import { FigSlideInstanceElement } from './fig-slide-instance';
 
 export interface FigTemplate {
-  new(): FigSlide;
-}
-
-export abstract class FigSlide {
-  abstract render(): TemplateResult;
+  new(): FigSlideInstanceElement;
 }
 
 /**
@@ -42,6 +39,25 @@ function parseFigTemplate(element: HTMLTemplateElement,
 
   while (walker.nextNode()) {
     const node = walker.currentNode;
+
+    /**
+     * Specially handle two type of <templates>:
+     * 
+     *  - Directives:
+     * 
+     *    <template directive="d(a1, a2, $this)" parameters="p1, p2">
+     *    </template>
+     * 
+     *    This represents a call to a directive and is transformed to:
+     * 
+     *    ${directive(a1, a2, (p1, p2) =" html`...`")}
+     * 
+     *  - Blocks:
+     * 
+     *    <template block="name"></template>
+     * 
+     *    Blocks are transformed into methods on the FigSlide class.
+     */
     if (isDirective(node)) {
       let directive = node.getAttribute('directive')!;
 
@@ -68,33 +84,45 @@ function parseFigTemplate(element: HTMLTemplateElement,
       node.remove();
     }
   }
-  const decodedTemplate = element.innerHTML.replace(/&amp;/g, '&')
-                              .replace(/&gt;/g, '>')
-                              .replace(/&lt;/g, '<');
   return {
-    render: decodedTemplate,
+    render: element.innerHTML,
     blocks,
   };
 }
 
-export function createFigTemplate(element: HTMLTemplateElement,
+/**
+ * Creates a subclass of FigSlide
+ */
+export function createFigTemplateClass(
+  slideDefinition: FigSlideElement,
+  element: HTMLTemplateElement,
   theme?: FigThemeElement,
   layout?: FigSlideElement): FigTemplate {
   const t = parseFigTemplate(element, theme, layout);
 
-  const templateFunction = new Function('html', '$BaseClass', `
+  const propertiesAttr = slideDefinition.getAttribute('properties');
+  const properties = propertiesAttr === null ? [] : propertiesAttr.split(' ');
+  const templateSource = `
     return class extends $BaseClass {
+      static get properties() {
+        return {
+          ${properties.map((p) => `${p}: {},`)}
+        };
+      }
+
       render() {
         return html\`${t.render}\`;
       }
+
       ${t.blocks.map(({name, blockTemplate}) => `
         ${name}() {
           return html\`${blockTemplate.render}\`;
         }
       `)}
     }
-  `);
-  const baseClass = layout === undefined ? FigSlide : layout._figTemplate;
+    `;
+  const templateFunction = new Function('html', '$BaseClass', templateSource);
+  const baseClass = layout === undefined ? FigSlideInstanceElement : layout._figTemplateClass;
   const figTemplate = templateFunction(html, baseClass);
   return figTemplate;
 }

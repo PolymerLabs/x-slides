@@ -16,9 +16,12 @@ import {html, LitElement, property} from '@polymer/lit-element';
 import {TemplateResult} from 'lit-html';
 
 import {customElement} from './decorators.js';
-import {createFigTemplate, FigTemplate} from './fig-template.js';
+import {createFigTemplateClass, FigTemplate} from './fig-template.js';
 import {FigThemeElement} from './fig-theme.js';
 import {FigViewerElement} from './fig-viewer.js';
+import { FigSlideInstanceElement } from './fig-slide-instance.js';
+
+let slideCount = 0;
 
 @customElement('fig-slide')
 export class FigSlideElement extends LitElement {
@@ -27,15 +30,17 @@ export class FigSlideElement extends LitElement {
 
   @property() step: number = 0;
 
-  @property({attribute : 'name', reflect: true}) name?: string;
+  @property({attribute : 'name', reflect: true})
+  name?: string;
 
-  @property({attribute : 'layout', reflect: true}) layoutName?: string;
+  @property({attribute : 'layout', reflect: true})
+  layoutName?: string;
 
   private get _template(): HTMLTemplateElement|null {
     return this.querySelector('template');
   }
 
-  _figTemplate?: FigTemplate;
+  _figTemplateClass?: FigTemplate;
 
   connectedCallback() {
     super.connectedCallback();
@@ -52,7 +57,9 @@ export class FigSlideElement extends LitElement {
     const layout = (theme !== undefined && this.layoutName)
                        ? theme.getLayout(this.layoutName)
                        : undefined;
-    this._figTemplate = createFigTemplate(template, theme, layout);
+    this._figTemplateClass = createFigTemplateClass(this, template, theme, layout);
+    const tagName = `fig-slide-instance-${slideCount++}`;
+    customElements.define(tagName, this._figTemplateClass);
   }
 
   render() {
@@ -65,10 +72,9 @@ export class FigSlideElement extends LitElement {
     `;
   }
 
-  renderSlide(): TemplateResult|undefined {
-    if (this._figTemplate !== undefined) {
-      const i = new (this._figTemplate)()
-      return i.render();
+  createInstance(): FigSlideInstanceElement|undefined {
+    if (this._figTemplateClass !== undefined) {
+      return new (this._figTemplateClass)()
     }
   }
 

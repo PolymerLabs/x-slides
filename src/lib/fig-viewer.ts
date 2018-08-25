@@ -1,8 +1,13 @@
 import {html, LitElement, property} from '@polymer/lit-element';
 
 import {customElement, query} from './decorators.js';
-import {FigSlideElement} from './fig-slide.js';
+
 import {FigThemeElement} from './fig-theme.js';
+import {FigSlideElement} from './fig-slide.js';
+
+import '@justinfagnani/rainbow/src/language/html.js';
+import '@justinfagnani/rainbow/src/language/css.js';
+import '@justinfagnani/rainbow/src/language/javascript.js';
 
 @customElement('fig-viewer')
 export class FigViewerElement extends LitElement {
@@ -26,10 +31,6 @@ export class FigViewerElement extends LitElement {
 
   @query('#container') private _container!: HTMLDivElement;
 
-  private _nextClick = () => this.next();
-
-  private _previousClick = () => this.previous();
-
   private _onKeyDownBound = (e: KeyboardEvent) => this._onKeyDown(e);
 
   private _routeBound = () => this._route();
@@ -50,6 +51,7 @@ export class FigViewerElement extends LitElement {
 
   render() {
     const slide = this._getSlide();
+    const slideInstance = (slide === null) ? undefined : slide.createInstance();
     // There are two style tags below because one has dynamic bindings, and we
     // don't want to invalidate all of the styles.
     return html`
@@ -70,6 +72,10 @@ export class FigViewerElement extends LitElement {
         }
         #container {
           flex: 0 0 auto;
+        }
+        #container > * {
+          display: block;
+          height: 100%;
         }
         #controls {
           color: white;
@@ -98,14 +104,14 @@ export class FigViewerElement extends LitElement {
           fill: white;
         }
       </style>
-      <div id="container">${slide && slide.renderSlide()}</div>
+      <div id="container">${slideInstance}</div>
       <div id="controls">
-        <button on-click=${() => this._previousClick}>
+        <button @click=${() => this.previous()}>
           <svg style="width:24px;height:24px" viewBox="0 0 24 24">
             <path fill="#000000" d="M19,5V19H16V5M14,5V19L3,12" />
           </svg>
         </button>
-        <button on-click=${() => this._nextClick}>
+        <button @click=${() => this.next()}>
           <svg style="width:24px;height:24px" viewBox="0 0 24 24">
             <path fill="#000000" d="M5,5V19H8V5M10,5V19L21,12" />
           </svg>
@@ -129,6 +135,13 @@ export class FigViewerElement extends LitElement {
   previous() {
     if (this.index > 0) {
       this.index--;
+    }
+  }
+
+  update(changedProps: Map<any, any>) {
+    super.update(changedProps);
+    if (changedProps.has('index')) {
+      window.location.hash = `slide-${this.index}`;
     }
   }
 

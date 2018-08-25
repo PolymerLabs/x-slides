@@ -2,7 +2,7 @@
 import {html, render} from 'lit-html';
 import {repeat} from 'lit-html/directives/repeat';
 
-import {createFigTemplate} from '../../lib/fig-template.js';
+import {createFigTemplateClass} from '../../lib/fig-template.js';
 import {stripExpressionMarkers} from '../strip-markers.js';
 
 /// <reference path="../../../node_modules/@types/mocha/index.d.ts" />
@@ -21,7 +21,7 @@ suite('fig-template', () => {
 
   test('create a simple template', () => {
     templateElement.innerHTML = `<div>\${data.foo}</div>`;
-    const templateFunction = createFigTemplate(templateElement, [ 'data' ]);
+    const templateFunction = createFigTemplateClass(templateElement, [ 'data' ]);
     const scope = {data : {foo : 'foo'}};
     render(templateFunction(scope), container);
     assert.equal(stripExpressionMarkers(container.innerHTML), '<div>foo</div>');
@@ -35,7 +35,7 @@ suite('fig-template', () => {
         </template>
       </div>`;
     const templateFunction =
-        createFigTemplate(templateElement, [ 'data', 'repeat' ]);
+        createFigTemplateClass(templateElement, [ 'data', 'repeat' ]);
     const scope = {
       data : {
         items : [ 'foo', 'bar' ],
@@ -67,7 +67,7 @@ suite('fig-template', () => {
     };
     const foo = () => html`<h1>foo</h1>`;
     const templateFunction =
-        createFigTemplate(templateElement, [ 'block', 'foo' ]);
+        createFigTemplateClass(templateElement, [ 'block', 'foo' ]);
     const scope = {
       block,
       foo,

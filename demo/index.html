@@ -35,9 +35,9 @@
               background-position: center;
             }
           </style>
-          <h1>Presentations with Polymer</h1>
-          <h2>Justin Fagnani</h2>
-          <h2>Engineer, Polymer Team</h2>
+          <h1>Presentations with LitElement</h1>
+          <h2>${this.author()}</h2>
+          <h2>Engineer-Type-Person, Polymer Project</h2>
         </template>
       </fig-slide>
 
@@ -45,10 +45,28 @@
         <template>
           ${super.render()}
           <div>
-            <h1>Presentations with Polymer</h1>
+            <h1>Presentations with LitElement</h1>
             <p>
               This is the second page.
+              Still written by ${this.author()}
             </p>
+          </div>
+        </template>
+      </fig-slide>
+
+      <fig-slide layout="base">
+        <template>
+          ${super.render()}
+          <div>
+            <h1>But Why?</h1>
+            <ul>
+              <li>It's fun</li>
+              <li>Custom Elements</li>
+              <li>Syntax Highlighting</li>
+              <li>Theming with CSS</li>
+              <li>Interactivity & Demos</li>
+              <li>Prototype Declarative lit-html Templates</li>
+            </ul>
           </div>
         </template>
       </fig-slide>
@@ -64,7 +82,7 @@
         </template>
       </fig-slide>
 
-      <fig-slide layout="title-body">
+      <fig-slide layout="title-body" properties="rainbowTheme">
         <template>
           ${super.render()}
           <style>
@@ -74,20 +92,63 @@
             }
           </style>
           <h1 hero>Example</h1>
-          <pre>
-&lt;fig-slide layout="title-body">
-  &lt;template>
-    &lt;template block="super">&lt;/template>
-    &lt;h1>Example&lt;/h1>
-    &lt;p>
-      This is an example slide.
-    &lt;/p>
-  &lt;/template>
-&lt;/fig-slide>
-          </pre>
+          <select 
+              id="rainbowTheme"
+              @change="${(e) => this.rainbowTheme = e.target.value}">
+            <option ?selected="${this.rainbowTheme === 'all-hallows-eve'}">all-hallows-eve</option>
+            <option ?selected="${this.rainbowTheme === 'blackboard'}">blackboard</option>
+            <option ?selected="${this.rainbowTheme === 'dreamweaver'}">dreamweaver</option>
+            <option ?selected="${this.rainbowTheme === 'espresso-libre'}">espresso-libre</option>
+            <option ?selected="${this.rainbowTheme === 'github'}">github</option>
+            <option ?selected="${this.rainbowTheme === 'kimbie-dark'}">kimbie-dark</option>
+            <option ?selected="${this.rainbowTheme === 'kimbie-light'}">kimbie-light</option>
+            <option ?selected="${this.rainbowTheme === 'monokai'}">monokai</option>
+            <option ?selected="${this.rainbowTheme === 'obsidian'}">obsidian</option>
+            <option ?selected="${this.rainbowTheme === 'paraiso-dark'}">paraiso-dark</option>
+            <option ?selected="${this.rainbowTheme === 'paraiso-light'}">paraiso-light</option>
+            <option ?selected="${this.rainbowTheme === 'pastie'}">pastie</option>
+            <option ?selected="${this.rainbowTheme === 'rainbow'}">rainbow</option>
+            <option ?selected="${this.rainbowTheme === 'solarized-dark'}">solarized-dark</option>
+            <option ?selected="${this.rainbowTheme === 'solarized-light'}">solarized-light</option>
+            <option ?selected="${this.rainbowTheme === 'sunburst'}">sunburst</option>
+            <option ?selected="${this.rainbowTheme === 'tomorrow-night'}">tomorrow-night</option>
+            <option ?selected="${this.rainbowTheme === 'tricolore'}">tricolore</option>
+            <option ?selected="${this.rainbowTheme === 'twilight'}">twilight</option>
+            <option ?selected="${this.rainbowTheme === 'zenburnesque'}">zenburnesque</option>              
+          </select>
+          ${this.rainbowTheme = this.rainbowTheme || 'obsidian'}
+          <link rel="stylesheet" href="/node_modules/@justinfagnani/rainbow/themes/css/${this.rainbowTheme}.css">
+          <pre><code data-language="html">
+<script type="code">
+  <fig-slide layout="title-body">
+    <template>
+      <template block="super"></template>
+      <h1>Example</h1>
+      <p>
+        This is an example slide.
+      </p>
+    </template>
+  </fig-slide>
+</script>
+        </code></pre>
         </template>
       </fig-slide>
 
+      <!-- <fig-slide layout="title-body" properties="rainbowTheme">
+          <template>
+            ${super.render()}
+            <link rel="stylesheet" href="/node_modules/@justinfagnani/rainbow/themes/css/obsidian.css">
+            <pre><code data-language="html">
+  <script type="code">
+  <ul>
+    <template directive="repeat([1, 2, 3], $this)" parameters="i">
+      <li>${i}</li>
+    </template>
+  </ul>
+  </script>
+          </code></pre>
+          </template>
+        </fig-slide> -->
 
     </fig-viewer> 
   </body>
