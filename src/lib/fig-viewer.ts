@@ -3,7 +3,6 @@ import {html, LitElement, property} from '@polymer/lit-element';
 import {customElement, query} from './decorators.js';
 import {FigSlideElement} from './fig-slide.js';
 import {FigThemeElement} from './fig-theme.js';
-import {setCurrentSlide, setCurrentSlideContainer} from './globals.js';
 
 @customElement('fig-viewer')
 export class FigViewerElement extends LitElement {
@@ -133,11 +132,6 @@ export class FigViewerElement extends LitElement {
         </span>
       </div>
     `;
-  }
-
-  onRender() {
-    setCurrentSlide(this._getSlide());
-    setCurrentSlideContainer(this._container);
   }
 
   next() {
