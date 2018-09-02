@@ -5,10 +5,6 @@ import {customElement, query} from './decorators.js';
 import {FigThemeElement} from './fig-theme.js';
 import {FigSlideElement} from './fig-slide.js';
 
-import '@justinfagnani/rainbow/src/language/html.js';
-import '@justinfagnani/rainbow/src/language/css.js';
-import '@justinfagnani/rainbow/src/language/javascript.js';
-
 @customElement('fig-viewer')
 export class FigViewerElement extends LitElement {
   @property() width: number = 800;
@@ -73,10 +69,10 @@ export class FigViewerElement extends LitElement {
         #container {
           flex: 0 0 auto;
         }
-        #container > * {
+        /* #container > * {
           display: block;
           height: 100%;
-        }
+        } */
         #controls {
           color: white;
           font: Arial, Sans Serif;
@@ -203,5 +199,11 @@ export class FigViewerElement extends LitElement {
                       : viewerWidth / containerWidth;
 
     style.transform = `scale(${scale})`;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'fig-viewer': FigViewerElement;
   }
 }

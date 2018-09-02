@@ -13,12 +13,10 @@
  */
 
 import {html, LitElement, property} from '@polymer/lit-element';
-import {TemplateResult} from 'lit-html';
 
 import {customElement} from './decorators.js';
 import {createFigTemplateClass, FigTemplate} from './fig-template.js';
 import {FigThemeElement} from './fig-theme.js';
-import {FigViewerElement} from './fig-viewer.js';
 import { FigSlideInstanceElement } from './fig-slide-instance.js';
 
 let slideCount = 0;
@@ -79,4 +77,10 @@ export class FigSlideElement extends LitElement {
   }
 
   next(): boolean { return false; }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'fig-slide': FigSlideElement;
+  }
 }

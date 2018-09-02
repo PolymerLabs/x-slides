@@ -1,7 +1,7 @@
 /**
  * Class decorator that registers a custom element class.
  */
-export const customElement = (tagName: string) => (clazz: any) => {
+export const customElement = (tagName: keyof HTMLElementTagNameMap) => (clazz: any) => {
   window.customElements.define(tagName, clazz);
   return clazz;
 };

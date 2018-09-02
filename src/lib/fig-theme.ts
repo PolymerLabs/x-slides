@@ -45,3 +45,9 @@ export class FigThemeElement extends LitElement {
     return template === null ? undefined : template;
   }
 }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'fig-theme': FigThemeElement;
+  }
+}

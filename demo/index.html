@@ -118,8 +118,16 @@
           </select>
           ${this.rainbowTheme = this.rainbowTheme || 'obsidian'}
           <link rel="stylesheet" href="/node_modules/@justinfagnani/rainbow/themes/css/${this.rainbowTheme}.css">
-          <pre><code data-language="html">
-<script type="code">
+          <pre><code data-language="javascript">
+class MyElement extends HTMLElement {
+  render() {
+    return html\`
+      &lt;h1>Hello&lt;/h1>
+    \`;
+  }
+}
+
+            <!-- <script type="code">
   <fig-slide layout="title-body">
     <template>
       <template block="super"></template>
@@ -129,7 +137,7 @@
       </p>
     </template>
   </fig-slide>
-</script>
+</script> -->
         </code></pre>
         </template>
       </fig-slide>

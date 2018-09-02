@@ -1,7 +1,12 @@
-import {html, LitElement, property} from '@polymer/lit-element';
+import {LitElement} from '@polymer/lit-element';
 
-import {customElement, query} from './decorators.js';
+import {customElement} from './decorators.js';
 import {color} from '@justinfagnani/rainbow';
+
+// These imports register languages with rainbow
+import '@justinfagnani/rainbow/lib/language/html.js';
+import '@justinfagnani/rainbow/lib/language/css.js';
+import '@justinfagnani/rainbow/lib/language/javascript.js';
 
 /**
  * Used to create an empty ShadowRoot to render a slide into.
