@@ -18,8 +18,16 @@ export abstract class FigSlideInstanceElement extends LitElement {
   // PropertyKey
   async update(changedProperties: Map<string, unknown>) {
     super.update(changedProperties);
-    await color(this.shadowRoot);
+    console.log('before Color');
+    // await color(this.shadowRoot!);
+    console.log('after Color');
     // const codeBlocks = this.shadowRoot!.querySelectorAll('pre');
     // await Promise.all(Array.from(codeBlocks).map((b) => color(b)));
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'fig-slide-instance': FigSlideInstanceElement;
   }
 }

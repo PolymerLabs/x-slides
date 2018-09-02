@@ -1,6 +1,6 @@
 {
-  "name": "fig",
-  "version": "1.0.0",
+  "name": "@polymer/fig",
+  "version": "0.1.0-pre.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@justinfagnani/rainbow": "0.1.0-pre.5",
+    "@justinfagnani/rainbow": "0.1.0-pre.6",
     "@polymer/lit-element": "^0.6.0-dev.5"
   },
   "devDependencies": {
