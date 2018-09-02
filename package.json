@@ -14,8 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@justinfagnani/rainbow": "0.1.0-pre.6",
-    "@polymer/lit-element": "^0.6.0-dev.5"
+    "@justinfagnani/rainbow": "0.1.0-pre.8",
+    "@polymer/lit-element": "^0.6.0-dev.6"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
