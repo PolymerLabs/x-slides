@@ -137,14 +137,10 @@ export class FigViewerElement extends LitElement {
   update(changedProps: Map<any, any>) {
     super.update(changedProps);
     if (changedProps.has('index')) {
-      window.location.hash = `slide-${this.index}`;
+      window.location.hash = `slide-${this.index + 1}`;
+      this.dispatchEvent(new CustomEvent('index-changed', {detail: this.index}));
     }
   }
-
-  // @observe('index')
-  // _indexChanged(index: number) {
-  //   window.location.hash = `slide-${index}`;
-  // }
 
   goto(index: number) {
     if (index < 0) {
@@ -159,8 +155,8 @@ export class FigViewerElement extends LitElement {
   _route() {
     // Simple fragment-based router
     if (window.location.hash.startsWith('#slide-')) {
-      const slideString = window.location.hash.substring('#slide-'.length)!
-                          const index = parseInt(slideString);
+      const slideString = window.location.hash.substring('#slide-'.length)!;
+      const index = parseInt(slideString) - 1;
       this.goto(index);
     } else {
       this.index = 0;
