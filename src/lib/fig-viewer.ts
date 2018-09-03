@@ -1,7 +1,7 @@
 import {html, LitElement, property} from '@polymer/lit-element';
 
-import {customElement, query} from './decorators.js';
-
+import {customElement, queryAll} from './decorators.js';
+import {FigSlideInstanceElement} from './fig-slide-instance.js';
 import {FigThemeElement} from './fig-theme.js';
 import {FigSlideElement} from './fig-slide.js';
 
@@ -15,6 +15,11 @@ export class FigViewerElement extends LitElement {
 
   @property({attribute : 'theme', reflect: true}) themeName?: string;
 
+  @property()
+  previousSlideInstance: FigSlideInstanceElement|undefined = undefined;
+  @property() slideInstance: FigSlideInstanceElement|undefined = undefined;
+  @property() nextSlideInstance: FigSlideInstanceElement|undefined = undefined;
+
   get theme(): FigThemeElement|undefined {
     return (this.themeName !== undefined)
                ? FigThemeElement.themes.get(this.themeName)
@@ -25,7 +30,7 @@ export class FigViewerElement extends LitElement {
 
   get length(): number { return this.slides.length; }
 
-  @query('#container') private _container!: HTMLDivElement;
+  @queryAll('.container') private _containers!: NodeListOf<HTMLDivElement>;
 
   private _onKeyDownBound = (e: KeyboardEvent) => this._onKeyDown(e);
 
@@ -34,7 +39,7 @@ export class FigViewerElement extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    const ro = new ResizeObserver((entries) => this._onResize());    
+    const ro = new ResizeObserver((entries) => this._onResize());
     ro.observe(this);
 
     this.setAttribute('tabindex', this.getAttribute('tabindex') || '-1');
@@ -43,16 +48,30 @@ export class FigViewerElement extends LitElement {
 
     window.addEventListener('popstate', this._routeBound);
     this._route();
+
+    if (!window.customElements.get('fig-slide')) {
+      window.customElements.whenDefined('fig-slide').then(() => {
+        this.goto(this.index);
+      });
+    }
   }
 
   render() {
     const slide = this._getSlide();
-    const slideInstance = (slide === null) ? undefined : slide.createInstance();
+
+    const ringBuffer: Array<FigSlideInstanceElement|undefined> = [];
+    ringBuffer[this.index % 3] = this.previousSlideInstance;
+    ringBuffer[(this.index + 1) % 3] = this.slideInstance;
+    ringBuffer[(this.index + 2) % 3] = this.nextSlideInstance;
+    const labels: string[] = [];
+    labels[this.index % 3] = 'previous';
+    labels[(this.index + 1) % 3] = 'current';
+    labels[(this.index + 2) % 3] = 'next';
     // There are two style tags below because one has dynamic bindings, and we
     // don't want to invalidate all of the styles.
     return html`
       <style>
-        #container {
+        #current.container {
           width: ${slide ? slide.width : 0}px;
           height: ${slide ? slide.height : 0}px;
         }
@@ -66,10 +85,10 @@ export class FigViewerElement extends LitElement {
           justify-content: center;
           overflow: hidden;
         }
-        #container {
+        .container {
           flex: 0 0 auto;
         }
-        /* #container > * {
+        /* .container > * {
           display: block;
           height: 100%;
         } */
@@ -99,8 +118,14 @@ export class FigViewerElement extends LitElement {
         svg * {
           fill: white;
         }
+        #previous, #next {
+          height: 0px;
+          width: 0px;
+        }
       </style>
-      <div id="container">${slideInstance}</div>
+      <div class="container" id="${labels[0]}">${ringBuffer[0]}</div>
+      <div class="container" id="${labels[1]}">${ringBuffer[1]}</div>
+      <div class="container" id="${labels[2]}">${ringBuffer[2]}</div>
       <div id="controls">
         <button @click=${() => this.previous()}>
           <svg style="width:24px;height:24px" viewBox="0 0 24 24">
@@ -125,12 +150,22 @@ export class FigViewerElement extends LitElement {
       // TODO: ?
     } else if (this.index < this.length - 1) {
       this.index++;
+      if (this.nextSlideInstance !== undefined) {
+        this.slideInstance = this.nextSlideInstance;
+      } else {
+        this.slideInstance = this._getSlideInstance(this.index);
+      }
+      this.previousSlideInstance = this._getSlideInstance(this.index - 1);
+      this.nextSlideInstance = this._getSlideInstance(this.index + 1);
     }
   }
 
   previous() {
     if (this.index > 0) {
       this.index--;
+      this.slideInstance = this.previousSlideInstance;
+      this.previousSlideInstance = this._getSlideInstance(this.index - 1);
+      this.nextSlideInstance = this._getSlideInstance(this.index + 1);
     }
   }
 
@@ -143,6 +178,9 @@ export class FigViewerElement extends LitElement {
   }
 
   goto(index: number) {
+    if (index === this.index && this.slideInstance) {
+      return;
+    }
     if (index < 0) {
       this.index = 0;
     } else if (index > this.length - 1) {
@@ -150,6 +188,9 @@ export class FigViewerElement extends LitElement {
     } else {
       this.index = index;
     }
+    this.slideInstance = this._getSlideInstance(this.index);
+    this.previousSlideInstance = this._getSlideInstance(this.index - 1);
+    this.nextSlideInstance = this._getSlideInstance(this.index + 1);
   }
 
   _route() {
@@ -167,6 +208,13 @@ export class FigViewerElement extends LitElement {
     return this.slides.item(index) as FigSlideElement;
   }
 
+  private _getSlideInstance(index: number): FigSlideInstanceElement|undefined {
+    const slide = this._getSlide(index);
+    if (slide !== null && slide.createInstance) {
+      return slide.createInstance();
+    }
+  }
+
   _onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
     case 'ArrowLeft':
@@ -179,11 +227,12 @@ export class FigViewerElement extends LitElement {
   }
 
   _onResize() {
-    const container = this._container;
-    const style = container.style;
-
-    const containerWidth = container.offsetWidth;
-    const containerHeight = container.offsetHeight;
+    // This is a hack, we assume that all slides are the same size, as we
+    // use the info of the currently active slide to calculate the scale.
+    const activeContainer =
+        this.shadowRoot!.querySelector('.container#current')! as HTMLElement;
+    const containerWidth = activeContainer.offsetWidth;
+    const containerHeight = activeContainer.offsetHeight;
     const containerRatio = containerWidth / containerHeight;
 
     const viewerWidth = this.offsetWidth;
@@ -194,7 +243,9 @@ export class FigViewerElement extends LitElement {
                       ? viewerHeight / containerHeight
                       : viewerWidth / containerWidth;
 
-    style.transform = `scale(${scale})`;
+    for (const container of this._containers) {
+      container.style.transform = `scale(${scale})`;
+    }
   }
 }
 
