@@ -99,10 +99,11 @@ export class FigViewerElement extends LitElement {
         .container {
           flex: 0 0 auto;
         }
-        /* .container > * {
+        .container > * {
           display: block;
           height: 100%;
-        } */
+          box-sizing: border-box;
+        }
         #controls {
           color: white;
           font: Arial, Sans Serif;
