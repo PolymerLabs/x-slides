@@ -1,9 +1,14 @@
+import '@justinfagnani/rainbow/lib/language/html.js';
+import '@justinfagnani/rainbow/lib/language/css.js';
+import '@justinfagnani/rainbow/lib/language/javascript.js';
+import '@justinfagnani/rainbow/lib/language/python.js';
+
 import {html, LitElement, property} from '@polymer/lit-element';
 
 import {customElement, queryAll} from './decorators.js';
 import {FigSlideInstanceElement} from './fig-slide-instance.js';
-import {FigThemeElement} from './fig-theme.js';
 import {FigSlideElement} from './fig-slide.js';
+import {FigThemeElement} from './fig-theme.js';
 
 @customElement('fig-viewer')
 export class FigViewerElement extends LitElement {
@@ -13,7 +18,7 @@ export class FigViewerElement extends LitElement {
 
   @property() index: number = 0;
 
-  @property({attribute : 'theme', reflect: true}) themeName?: string;
+  @property({attribute: 'theme', reflect: true}) themeName?: string;
 
   @property()
   previousSlideInstance: FigSlideInstanceElement|undefined = undefined;
@@ -21,14 +26,18 @@ export class FigViewerElement extends LitElement {
   @property() nextSlideInstance: FigSlideInstanceElement|undefined = undefined;
 
   get theme(): FigThemeElement|undefined {
-    return (this.themeName !== undefined)
-               ? FigThemeElement.themes.get(this.themeName)
-               : undefined;
+    return (this.themeName !== undefined) ?
+        FigThemeElement.themes.get(this.themeName) :
+        undefined;
   }
 
-  get slides(): NodeList { return this.querySelectorAll(':scope > fig-slide'); }
+  get slides(): NodeList {
+    return this.querySelectorAll(':scope > fig-slide');
+  }
 
-  get length(): number { return this.slides.length; }
+  get length(): number {
+    return this.slides.length;
+  }
 
   @queryAll('.container') private _containers!: NodeListOf<HTMLDivElement>;
 
@@ -78,7 +87,9 @@ export class FigViewerElement extends LitElement {
       </style>
       <style>
         :host {
-          background: black;
+          background-color: var(--fig-backdrop-color, black);
+          background-image: var(--fig-backdrop-image, none);
+          background-size: contain;
           display: flex;
           position: relative;
           align-items: center;
@@ -121,6 +132,8 @@ export class FigViewerElement extends LitElement {
         #previous, #next {
           height: 0px;
           width: 0px;
+          opacity: 0;
+          user-select: none;
         }
       </style>
       <div class="container" id="${labels[0]}">${ringBuffer[0]}</div>
@@ -173,7 +186,8 @@ export class FigViewerElement extends LitElement {
     super.update(changedProps);
     if (changedProps.has('index')) {
       window.location.hash = `slide-${this.index + 1}`;
-      this.dispatchEvent(new CustomEvent('index-changed', {detail: this.index}));
+      this.dispatchEvent(
+          new CustomEvent('index-changed', {detail: this.index}));
     }
   }
 
@@ -217,12 +231,12 @@ export class FigViewerElement extends LitElement {
 
   _onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
-    case 'ArrowLeft':
-      this.previous();
-      break;
-    case 'ArrowRight':
-      this.next();
-      break;
+      case 'ArrowLeft':
+        this.previous();
+        break;
+      case 'ArrowRight':
+        this.next();
+        break;
     }
   }
 
@@ -239,9 +253,9 @@ export class FigViewerElement extends LitElement {
     const viewerHeight = this.offsetHeight;
     const viewerRatio = viewerWidth / viewerHeight;
 
-    const scale = (containerRatio < viewerRatio)
-                      ? viewerHeight / containerHeight
-                      : viewerWidth / containerWidth;
+    const scale = (containerRatio < viewerRatio) ?
+        viewerHeight / containerHeight :
+        viewerWidth / containerWidth;
 
     for (const container of this._containers) {
       container.style.transform = `scale(${scale})`;
