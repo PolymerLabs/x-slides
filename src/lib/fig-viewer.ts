@@ -159,8 +159,9 @@ export class FigViewerElement extends LitElement {
 
   next() {
     const slide = this._getSlide();
-    if (slide && slide.next()) {
-      // TODO: ?
+    if (this.slideInstance && this.slideInstance.next()) {
+      // The slide handled the next()
+      return;
     } else if (this.index < this.length - 1) {
       this.index++;
       if (this.nextSlideInstance !== undefined) {
