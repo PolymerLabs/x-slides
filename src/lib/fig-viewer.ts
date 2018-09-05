@@ -106,7 +106,7 @@ export class FigViewerElement extends LitElement {
         #controls {
           color: white;
           font: Arial, Sans Serif;
-          display: flex;
+          display: var(--fig-controls-display, flex);
           align-items: center;
           background: rgba(0, 0, 0, .5);
           position: absolute;
