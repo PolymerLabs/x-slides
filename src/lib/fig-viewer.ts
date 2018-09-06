@@ -232,10 +232,15 @@ export class FigViewerElement extends LitElement {
   _onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowLeft':
+      case 'PageUp':
         this.previous();
         break;
       case 'ArrowRight':
+      case 'PageDown':
         this.next();
+        break;
+      case 'b':
+        // STOP button. Anything we want to do?
         break;
     }
   }
