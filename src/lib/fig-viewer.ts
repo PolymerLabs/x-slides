@@ -239,6 +239,15 @@ export class FigViewerElement extends LitElement {
       case 'PageDown':
         this.next();
         break;
+      case 'f':
+        // cmd+f or ctrl+f means "enter fullscreen"
+        if (event.metaKey || event.ctrlKey) {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            this.requestFullscreen();
+          }
+        }
       case 'b':
         // STOP button. Anything we want to do?
         break;
