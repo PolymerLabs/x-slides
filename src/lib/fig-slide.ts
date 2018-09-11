@@ -15,9 +15,9 @@
 import {html, LitElement, property} from '@polymer/lit-element';
 
 import {customElement} from './decorators.js';
+import {FigSlideInstanceElement} from './fig-slide-instance.js';
 import {createFigTemplateClass, FigTemplate} from './fig-template.js';
 import {FigThemeElement} from './fig-theme.js';
-import { FigSlideInstanceElement } from './fig-slide-instance.js';
 
 let slideCount = 0;
 
@@ -28,11 +28,9 @@ export class FigSlideElement extends LitElement {
 
   @property() step: number = 0;
 
-  @property({attribute : 'name', reflect: true})
-  name?: string;
+  @property({attribute: 'name', reflect: true}) name?: string;
 
-  @property({attribute : 'layout', reflect: true})
-  layoutName?: string;
+  @property({attribute: 'layout', reflect: true}) layoutName?: string;
 
   private get _template(): HTMLTemplateElement|null {
     return this.querySelector('template');
@@ -49,13 +47,14 @@ export class FigSlideElement extends LitElement {
       return;
     }
     const theme: FigThemeElement =
-        (this.parentElement instanceof FigThemeElement)
-            ? this.parentElement
-            : (this.parentElement as any).theme;
-    const layout = (theme !== undefined && this.layoutName)
-                       ? theme.getLayout(this.layoutName)
-                       : undefined;
-    this._figTemplateClass = createFigTemplateClass(this, template, theme, layout);
+        (this.parentElement instanceof FigThemeElement) ?
+        this.parentElement :
+        (this.parentElement as any).theme;
+    const layout = (theme !== undefined && this.layoutName) ?
+        theme.getLayout(this.layoutName) :
+        undefined;
+    this._figTemplateClass =
+        createFigTemplateClass(this, template, theme, layout);
     const tagName = `fig-slide-instance-${slideCount++}`;
     customElements.define(tagName, this._figTemplateClass);
   }
@@ -72,11 +71,11 @@ export class FigSlideElement extends LitElement {
 
   createInstance(): FigSlideInstanceElement|undefined {
     if (this._figTemplateClass !== undefined) {
-      return new (this._figTemplateClass)()
+      const instance = new (this._figTemplateClass)();
+      instance.slide = this;
+      return instance;
     }
   }
-
-  next(): boolean { return false; }
 }
 
 declare global {

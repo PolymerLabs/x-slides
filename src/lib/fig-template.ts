@@ -13,9 +13,10 @@
  */
 
 import {html, TemplateResult} from 'lit-html';
+
 import {FigSlideElement} from './fig-slide';
+import {FigSlideInstanceElement} from './fig-slide-instance';
 import {FigThemeElement} from './fig-theme';
-import { FigSlideInstanceElement } from './fig-slide-instance';
 
 export interface FigTemplate {
   new(): FigSlideInstanceElement;
@@ -28,77 +29,76 @@ export interface FigTemplate {
  *
  * @param element
  */
-function parseFigTemplate(element: HTMLTemplateElement,
-                                  theme?: FigThemeElement,
-                                  layout?: FigSlideElement) {
-  // Convert <template> to closures
-  const walker = document.createTreeWalker(
-      element.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
-
-  const blocks: any[] = [];
-
-  while (walker.nextNode()) {
-    const node = walker.currentNode;
-
-    /**
-     * Specially handle two type of <templates>:
-     * 
-     *  - Directives:
-     * 
-     *    <template directive="d(a1, a2, $this)" parameters="p1, p2">
-     *    </template>
-     * 
-     *    This represents a call to a directive and is transformed to:
-     * 
-     *    ${directive(a1, a2, (p1, p2) =" html`...`")}
-     * 
-     *  - Blocks:
-     * 
-     *    <template block="name"></template>
-     * 
-     *    Blocks are transformed into methods on the FigSlide class.
-     */
-    if (isDirective(node)) {
-      let directive = node.getAttribute('directive')!;
-
-      const parametersAttr = node.getAttribute('parameters');
-      const parameters =
-          parametersAttr !== null ? parametersAttr.split(' ') : [];
-      const directiveTemplate =
-          `(${parameters.join(', ')}) => ${parseFigTemplate(node, theme, layout).render}`;
-
-      // Replace references to `$this` in the directive expression
-      // with the directiveTemplate closure
-      directive = directive.replace('$this', directiveTemplate);
-
-      // Replace the <template> with a lit-html expression
-      node.parentNode!.insertBefore(new Text(`\${${directive}}`), node);
-      node.remove();
-    } else if (isBlock(node)) {
-      const name = node.getAttribute('block')!;
-      const parametersAttr = node.getAttribute('parameters');
-      const parameters =
-          parametersAttr !== null ? parametersAttr.split(' ') : [];
-      const blockTemplate = parseFigTemplate(node, theme, layout);
-      blocks.push({name, blockTemplate});
-      node.remove();
-    }
+function parseFigTemplate(
+    element: HTMLTemplateElement, theme?: FigThemeElement,
+    layout?: FigSlideElement) {
+  const blocks = new Map < string | null, {
+    node: HTMLTemplateElement;
+    parameters: string[],
   }
-  return {
-    render: element.innerHTML,
-    blocks,
+  > ();
+
+  const parseBlock = (node: HTMLTemplateElement) => {
+    let name = node.getAttribute('block');
+    if (blocks.has(name)) {
+      console.error(`Duplicate block name: ${name}`);
+    }
+    const parametersAttr = node.getAttribute('parameters');
+    const parameters = parametersAttr !== null ? parametersAttr.split(' ') : [];
+
+    const walker = document.createTreeWalker(
+        element.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (isBlock(node)) {
+        parseBlock(node);
+        node.remove();
+      } else if (isDirective(node)) {
+        parseDirective(node);
+      }
+    }
+    // const blockTemplate = parseFigTemplate(node, theme, layout);
+    blocks.set(name, {node, parameters});
   };
+
+  const parseDirective = (node: HTMLTemplateElement) => {
+    let directiveExpr = node.getAttribute('directive')!;
+    const parametersAttr = node.getAttribute('parameters');
+    const parameters = parametersAttr !== null ? parametersAttr.split(' ') : [];
+
+    const walker = document.createTreeWalker(
+        element.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+
+    while (walker.nextNode()) {
+      if (isDirective(node)) {
+        parseDirective(node);
+        node.remove();
+      }
+    }
+
+    const directiveTemplate = `(${parameters.join(', ')}) => ${node.innerHTML}`;
+
+    // Replace references to `$this` in the directive expression
+    // with the directiveTemplate closure
+    directiveExpr = directiveExpr.replace('$this', directiveTemplate);
+
+    // Replace the <template> with a lit-html expression
+    node.parentNode!.replaceChild(new Text(`\${${directiveExpr}}`), node);
+  };
+
+  parseBlock(element);
+  return blocks;
 }
 
 /**
  * Creates a subclass of FigSlide
  */
 export function createFigTemplateClass(
-  slideDefinition: FigSlideElement,
-  element: HTMLTemplateElement,
-  theme?: FigThemeElement,
-  layout?: FigSlideElement): FigTemplate {
-  const t = parseFigTemplate(element, theme, layout);
+    slideDefinition: FigSlideElement, element: HTMLTemplateElement,
+    theme?: FigThemeElement, layout?: FigSlideElement): FigTemplate {
+  const blocks = parseFigTemplate(element, theme, layout);
+  const defaultBlock = blocks.get(null);
 
   const propertiesAttr = slideDefinition.getAttribute('properties');
   const properties = propertiesAttr === null ? [] : propertiesAttr.split(' ');
@@ -110,19 +110,26 @@ export function createFigTemplateClass(
         };
       }
 
-      render() {
-        return html\`${t.render}\`;
-      }
+      ${
+      defaultBlock ? `renderDefault() {
+        return html\`${defaultBlock.node.innerHTML}\`;
+      }` :
+                     ''}
 
-      ${t.blocks.map(({name, blockTemplate}) => `
+      ${
+      Array.from(blocks.entries())
+          .filter(([name]) => name !== null)
+          .map(([name, block]) => `
         ${name}() {
-          return html\`${blockTemplate.render}\`;
+          return html\`${block.node.innerHTML}\`;
         }
       `)}
     }
     `;
+  console.log(templateSource);
   const templateFunction = new Function('html', '$BaseClass', templateSource);
-  const baseClass = layout === undefined ? FigSlideInstanceElement : layout._figTemplateClass;
+  const baseClass =
+      layout === undefined ? FigSlideInstanceElement : layout._figTemplateClass;
   const figTemplate = templateFunction(html, baseClass);
   return figTemplate;
 }

@@ -3,66 +3,45 @@
 <fig-theme name="dark">
 
   <fig-slide name="base">
-    <template>
+    <template block="styles">
+      ${super.styles()}
       <style>
-        /* @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes fade-out {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        } */
         :host {
           background: rgb(201, 33, 195);
           color: white;
-          font-family: arial, sans;
-          padding: 2.5em;
-          font-size: 2em;
+          font-family: Arial, sans-serif;
+          padding: 6rem;
+          font-size: 4rem;
           background-size: cover;
-          display: block;
         }
 
-        p,
-        ul {
-          font-size: 1.5em;
-          line-height: 2em;
-        }
-
-        /* * {
-          text-shadow: 0 0 10px black;
-        } */
         h1 {
-          font-size: 4em;
-          max-width: 80%;
-          margin: 20px 0;
-          /* animation: fade-in ease-in 1s; */
+          font-size: 8rem;
+          margin: 0 0 1rem 0;
         }
+
         h2 {
           font-weight: normal;
           font-size: 1.5em;
           max-width: 80%;
-          margin: 4px 0;
-          opacity: 0.5;
-          /* animation: fade-in ease-in 1s; */
+          margin: 0 0 4px 0;
         }
-        script[type="code"] {
-          display: inline;
-          font-size: inherit !important;
-          line-height: inherit !important;
-        }
-        pre, input, textarea, select, button {
+
+        pre,
+        input,
+        textarea,
+        select,
+        button {
           font-size: inherit !important;
           line-height: inherit !important;
         }
       </style>
-      <template block="author">Fifi</template>
     </template>
   </fig-slide>
 
   <fig-slide name="title" layout="base">
-    <template>
-      ${super.render()}
+    <template block="styles">
+      ${super.styles()}
       <style>
         /* h1 {
           font-size: 4em;
@@ -95,6 +74,7 @@
           max-width: 80%;
           margin: 20px 0;
         }
+
         h2 {
           font-weight: normal;
           font-size: 1.5em;

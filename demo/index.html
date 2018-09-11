@@ -1,163 +1,88 @@
 <!doctype html>
 
 <html>
-  <head>
-    <title>fig-slides demo</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="module" src="../fig.js"></script>
-    <link rel="import" href="./theme-dark.html">
+<head>
+  <title>fig-slides demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-      body, html {
-        margin: 0;
-        display: flex;
-        height: 100%;
-        width: 100%;
-        position: relative;
-      }
-      /* fig-viewer {
-        flex: 1;
-      } */
-    </style>
-  </head>
-  <body>
-    <fig-viewer theme="dark">
+  <script type="module" src="../fig.js"></script>
+  <link rel="import" href="./theme-dark.html">
 
-      <fig-slide layout="title" name="One">
-        <template>
-          ${super.render()}
-          <style>
-            :host {
-              background: url('crane.jpeg');
-              background-size: cover;
-              background-position: center;
-            }
-          </style>
-          <h1>Presentations with LitElement</h1>
-          <h2>${this.author()}</h2>
-          <h2>Engineer-Type-Person, Polymer Project</h2>
-        </template>
-      </fig-slide>
+  <style>
+    body,
+    html {
+      margin: 0;
+      display: flex;
+      height: 100%;
+      width: 100%;
+      position: relative;
+    }
+  </style>
+</head>
 
-      <fig-slide layout="base">
-        <template>
-          ${super.render()}
-          <div>
-            <h1>Presentations with LitElement</h1>
-            <p>
-              This is the second page.
-              Still written by ${this.author()}
-            </p>
-          </div>
-        </template>
-      </fig-slide>
+<body>
+  <fig-viewer theme="dark">
 
-      <fig-slide layout="base">
-        <template>
-          ${super.render()}
-          <div>
-            <h1>But Why?</h1>
-            <ul>
-              <li>It's fun</li>
-              <li>Custom Elements</li>
-              <li>Syntax Highlighting</li>
-              <li>Theming with CSS</li>
-              <li>Interactivity & Demos</li>
-              <li>Prototype Declarative lit-html Templates</li>
-            </ul>
-          </div>
-        </template>
-      </fig-slide>
+    <fig-slide layout="title">
+      <template>
+        <h1>Fig: lit-html Based Presentation Components</h1>
+        <p>
+          Fig lets you write presentations in HTML, using the power of lit-html and Web Components for theming and
+          dynamic content.
+        </p>
+      </template>
+    </fig-slide>
 
-      <fig-slide layout="title-body">
-        <template>
-          ${super.render()}
-          <h1>Architecture</h1>
-          <p>
-            All slides are written in &lt;template> elements, so that they can
-            be stamped out as needed, and in multiple views (such as filmstrips).
-          </p>
-        </template>
-      </fig-slide>
+    <fig-slide layout="base">
+      <template>
+        <h1>Fig Slides</h1>
+        <p>
+          A Fig slide looks like this:
+          <rainbow-code language="html">
+            <script type="code">
+<fig-slide layout="title">
+  <template>
+    <h1>Fig: lit-html Based Presentation Components</h1>
+    <p>
+      Fig lets you write presentations in HTML, using the power of lit-html and Web Components for theming
+      and dynamic content.
+    </p>
+  </template>
+</fig-slide>
+            </script>
+          </rainbow-code>
+        </p>
+      </template>
+    </fig-slide>
 
-      <fig-slide layout="title-body" properties="rainbowTheme">
-        <template>
-          ${super.render()}
-          <style>
-            pre {
-              font-size: 30px;
-              color: #C390D4;
-            }
-          </style>
-          <h1 hero>Example</h1>
-          <select 
-              id="rainbowTheme"
-              @change="${(e) => this.rainbowTheme = e.target.value}">
-            <option ?selected="${this.rainbowTheme === 'all-hallows-eve'}">all-hallows-eve</option>
-            <option ?selected="${this.rainbowTheme === 'blackboard'}">blackboard</option>
-            <option ?selected="${this.rainbowTheme === 'dreamweaver'}">dreamweaver</option>
-            <option ?selected="${this.rainbowTheme === 'espresso-libre'}">espresso-libre</option>
-            <option ?selected="${this.rainbowTheme === 'github'}">github</option>
-            <option ?selected="${this.rainbowTheme === 'kimbie-dark'}">kimbie-dark</option>
-            <option ?selected="${this.rainbowTheme === 'kimbie-light'}">kimbie-light</option>
-            <option ?selected="${this.rainbowTheme === 'monokai'}">monokai</option>
-            <option ?selected="${this.rainbowTheme === 'obsidian'}">obsidian</option>
-            <option ?selected="${this.rainbowTheme === 'paraiso-dark'}">paraiso-dark</option>
-            <option ?selected="${this.rainbowTheme === 'paraiso-light'}">paraiso-light</option>
-            <option ?selected="${this.rainbowTheme === 'pastie'}">pastie</option>
-            <option ?selected="${this.rainbowTheme === 'rainbow'}">rainbow</option>
-            <option ?selected="${this.rainbowTheme === 'solarized-dark'}">solarized-dark</option>
-            <option ?selected="${this.rainbowTheme === 'solarized-light'}">solarized-light</option>
-            <option ?selected="${this.rainbowTheme === 'sunburst'}">sunburst</option>
-            <option ?selected="${this.rainbowTheme === 'tomorrow-night'}">tomorrow-night</option>
-            <option ?selected="${this.rainbowTheme === 'tricolore'}">tricolore</option>
-            <option ?selected="${this.rainbowTheme === 'twilight'}">twilight</option>
-            <option ?selected="${this.rainbowTheme === 'zenburnesque'}">zenburnesque</option>              
-          </select>
-          ${this.rainbowTheme = this.rainbowTheme || 'obsidian'}
-          <link rel="stylesheet" href="/node_modules/@justinfagnani/rainbow/themes/css/${this.rainbowTheme}.css">
-          <pre><code data-language="javascript">
-class MyElement extends HTMLElement {
-  render() {
-    return html\`
-      &lt;h1>Hello&lt;/h1>
-    \`;
-  }
-}
+    <fig-slide layout="base">
+      <template>
+        <h1>But Why?</h1>
+        <ul>
+          <li>It's fun</li>
+          <li>Custom Elements</li>
+          <li>Syntax Highlighting</li>
+          <li>Theming with CSS</li>
+          <li>Interactivity & Demos</li>
+          <li>Prototype Declarative lit-html Templates</li>
+        </ul>
+      </template>
+    </fig-slide>
 
-            <!-- <script type="code">
-  <fig-slide layout="title-body">
-    <template>
-      <template block="super"></template>
-      <h1>Example</h1>
-      <p>
-        This is an example slide.
-      </p>
-    </template>
-  </fig-slide>
-</script> -->
-        </code></pre>
-        </template>
-      </fig-slide>
+    <fig-slide layout="title-body">
+      <template>
+        <h1>Architecture</h1>
+        <p>
+          All slides are written in &lt;template> elements, so that they can be stamped out as needed, and in multiple
+          views (such
+          as filmstrips).
+        </p>
+      </template>
+    </fig-slide>
 
-      <!-- <fig-slide layout="title-body" properties="rainbowTheme">
-          <template>
-            ${super.render()}
-            <link rel="stylesheet" href="/node_modules/@justinfagnani/rainbow/themes/css/obsidian.css">
-            <pre><code data-language="html">
-  <script type="code">
-  <ul>
-    <template directive="repeat([1, 2, 3], $this)" parameters="i">
-      <li>${i}</li>
-    </template>
-  </ul>
-  </script>
-          </code></pre>
-          </template>
-        </fig-slide> -->
+  </fig-viewer>
+</body>
 
-    </fig-viewer> 
-  </body>
 </html>
